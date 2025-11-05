@@ -13,3 +13,111 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
+// ----------------------------------------------------
+// ENUMS
+// ----------------------------------------------------
+enum UserRole {
+  ADMIN
+  BUYER
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  DELIVERED
+  CANCELLED
+}
+
+// ----------------------------------------------------
+// MODELS
+// ----------------------------------------------------
+
+// USER
+model User {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String     @unique
+  password    String
+  role        UserRole   @default(BUYER)
+  phone       String?
+  address     String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  orders      Order[]
+  feedbacks   Feedback[]
+  cartItems   CartItem[]
+}
+
+// PRODUCT
+model Product {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  description     String?
+  image           String?
+  category        String       // e.g. "Vegetable", "Fruit"
+  price           Float
+  stock           Int          @default(0)
+  unit            String       // e.g. "kg", "piece"
+  isOffer         Boolean      @default(false)
+  offerPercentage Float?       // e.g. 10 → means 10% off
+  offerPrice      Float?       // optional field to store discounted price (can be calculated dynamically)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  feedbacks       Feedback[]
+  orderItems      OrderItem[]
+  cartItems       CartItem[]
+}
+
+// FEEDBACK
+model Feedback {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  rating      Int
+  comment     String?
+  createdAt   DateTime @default(now())
+
+  userId      String   @db.ObjectId
+  productId   String   @db.ObjectId
+
+  user        User     @relation(fields: [userId], references: [id])
+  product     Product  @relation(fields: [productId], references: [id])
+}
+
+// ORDER
+model Order {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String      @db.ObjectId
+  totalAmount Float
+  status      OrderStatus @default(PENDING)
+  address     String?
+  createdAt   DateTime    @default(now())
+
+  user        User        @relation(fields: [userId], references: [id])
+  items       OrderItem[]
+}
+
+// ORDER ITEM
+model OrderItem {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId     String   @db.ObjectId
+  productId   String   @db.ObjectId
+  quantity    Int
+  price       Float     // snapshot of actual price at purchase (after discount if any)
+
+  order       Order     @relation(fields: [orderId], references: [id])
+  product     Product   @relation(fields: [productId], references: [id])
+}
+
+// CART ITEM
+model CartItem {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @db.ObjectId
+  productId   String   @db.ObjectId
+  quantity    Int      @default(1)
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id])
+  product     Product  @relation(fields: [productId], references: [id])
+}
