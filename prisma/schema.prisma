@@ -42,6 +42,7 @@ model User {
   role        UserRole   @default(BUYER)
   phone       String?
   address     String?
+
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
@@ -63,6 +64,8 @@ model Product {
   isOffer         Boolean      @default(false)
   offerPercentage Float?       // e.g. 10 → means 10% off
   offerPrice      Float?       // optional field to store discounted price (can be calculated dynamically)
+  isActive        Boolean      @default(true)
+
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
 
@@ -80,9 +83,12 @@ model Feedback {
 
   userId      String   @db.ObjectId
   productId   String   @db.ObjectId
+  
 
   user        User     @relation(fields: [userId], references: [id])
   product     Product  @relation(fields: [productId], references: [id])
+
+  
 }
 
 // ORDER
@@ -92,10 +98,15 @@ model Order {
   totalAmount Float
   status      OrderStatus @default(PENDING)
   address     String?
+
+  paymentMethod String?       // ✅ add this (e.g. "Cash on Delivery", "Card")
+  paymentStatus String?       // ✅ "Paid", "Unpaid", etc.
+
   createdAt   DateTime    @default(now())
 
   user        User        @relation(fields: [userId], references: [id])
   items       OrderItem[]
+
 }
 
 // ORDER ITEM
@@ -105,6 +116,7 @@ model OrderItem {
   productId   String   @db.ObjectId
   quantity    Int
   price       Float     // snapshot of actual price at purchase (after discount if any)
+  subtotal    Float?    
 
   order       Order     @relation(fields: [orderId], references: [id])
   product     Product   @relation(fields: [productId], references: [id])
@@ -120,4 +132,6 @@ model CartItem {
 
   user        User     @relation(fields: [userId], references: [id])
   product     Product  @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
 }
