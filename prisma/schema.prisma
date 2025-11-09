@@ -49,7 +49,23 @@ model User {
   orders      Order[]
   feedbacks   Feedback[]
   cartItems   CartItem[]
+  otps        Otp[] 
 }
+
+model Otp {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String?  @db.ObjectId
+  email       String?
+  phone       String?
+  code        String
+  purpose     String   // e.g., "SIGNUP", "PASSWORD_RESET"
+  expiresAt   DateTime
+  isVerified  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user        User?    @relation(fields: [userId], references: [id])
+}
+
 
 // PRODUCT
 model Product {
