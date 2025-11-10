@@ -41,7 +41,7 @@ model User {
   email    String   @unique
   password String
   role     UserRole @default(BUYER)
-  phone    String?
+  phone    String?  @unique
   address  String?
 
   createdAt DateTime @default(now())
@@ -56,8 +56,8 @@ model User {
 model Otp {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   userId     String?  @db.ObjectId
-  email      String?
-  phone      String?
+  email      String?   
+  phone      String?   
   code       String
   purpose    String // e.g., "SIGNUP", "PASSWORD_RESET"
   expiresAt  DateTime

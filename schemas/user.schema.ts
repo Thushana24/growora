@@ -34,8 +34,7 @@ export const RegisterUserSchema = z
       .trim()
       .regex(/^\d+$/, {
         message: "Phone number can only contain numbers",
-      })
-      .optional(),
+      }),
 
     password: z
       .string({ message: "Password is required" })

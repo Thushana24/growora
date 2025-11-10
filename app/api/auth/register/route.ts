@@ -13,11 +13,15 @@ export async function POST(request:NextRequest) {
             const body = await request.json();
             const validatedData = await RegisterUserSchema.parseAsync(body);
 
-            const isUserExist = await prisma.user.findUnique({
-                  where: {
-                        email: validatedData.email
-                  }
+            const isUserExist = await prisma.user.findFirst({
+              where: {
+                OR: [
+                  { email: validatedData.email },
+                  { phone: validatedData.phone },
+                ],
+              },
             });
+                
 
             if (isUserExist) {
               return NextResponse.json(
@@ -32,7 +36,7 @@ export async function POST(request:NextRequest) {
               );
             }
 
-            const { firstName, lastName, email, password} = validatedData;
+            const { firstName, lastName, email,phone, password} = validatedData;
 
             const hashedPassword = await argon2.hash(password);
 
@@ -43,6 +47,7 @@ export async function POST(request:NextRequest) {
                     firstName,
                     lastName,
                     email,
+                    phone,
                     password: hashedPassword,
                   },
                 });
@@ -52,6 +57,7 @@ export async function POST(request:NextRequest) {
                   data: {
                     userId: newUser.id,
                     email,
+                    phone,
                     code: otpCode,
                     purpose: "SIGNUP",
                     expiresAt: new Date(Date.now() + 10 * 60 * 1000), // OTP valid for 10 min
