@@ -3,7 +3,7 @@ import { z } from "zod";
 export const RegisterUserSchema = z
   .object({
     firstName: z
-      .string({ message:"First name is required" })
+      .string({ message: "First name is required" })
       .min(2, { message: "First name must be at least 2 characters long" })
       .max(50, { message: "First name cannot exceed 50 characters" })
       .trim()
@@ -26,6 +26,16 @@ export const RegisterUserSchema = z
       .max(255, { message: "Email cannot exceed 255 characters" })
       .trim()
       .toLowerCase(),
+
+    phone: z
+      .string()
+      .min(10, { message: "Invalid phone format" })
+      .max(12, { message: "Invalid phone format" })
+      .trim()
+      .regex(/^\d+$/, {
+        message: "Phone number can only contain numbers",
+      })
+      .optional(),
 
     password: z
       .string({ message: "Password is required" })
