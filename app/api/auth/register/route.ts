@@ -1,4 +1,5 @@
 import { RegisterUserSchema } from "@/schemas/user.schema";
+import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import argon2 from "argon2";
 import { generateOTP } from '../../helpers/generateOtp';
@@ -66,7 +67,7 @@ export async function POST(request:NextRequest) {
                   permissions: BUYER_PERMISSIONS,
             });
 
-            const { password: _, ...userResponse } = result.user;
+            const { password: _, ...userResponse } = result.newUser;
             const{...otpResponse} = result.otp;
 
             return NextResponse.json(
