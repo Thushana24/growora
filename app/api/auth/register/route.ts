@@ -5,6 +5,7 @@ import { generateOTP } from '../../helpers/generateOtp';
 import generateToken from '../../helpers/generateToken';
 import { BUYER_PERMISSIONS } from '../../permissions';
 import { TransactionClient } from "@/generated/prisma/internal/prismaNamespace";
+import handleError from "../../helpers/handleError";
 
 export async function POST(request:NextRequest) {
       try {
@@ -83,15 +84,6 @@ export async function POST(request:NextRequest) {
               { status: 201 }
             );
       } catch (error:any) {
-            return NextResponse.json(
-                  {
-                    success: false,
-                    error: {
-                      message: error.message || "Something went wrong",
-                      name: error.name || "Error",
-                    },
-                  },
-                  { status: 500 }
-            );
+            return handleError(error, "Failed to register user");
       }
 }
