@@ -14,6 +14,7 @@
     "@prisma/client": "^6.19.0",
     "@react-email/components": "^1.0.0",
     "@react-email/render": "^2.0.0",
+    "@tanstack/react-query": "^5.90.7",
     "argon2": "^0.44.0",
     "axios": "^1.13.2",
     "googleapis": "^165.0.0",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@tanstack/eslint-plugin-query": "^5.91.2",
     "@types/argon2": "^0.14.1",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
