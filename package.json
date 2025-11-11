@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",
+    "@react-email/components": "^1.0.0",
+    "@react-email/render": "^2.0.0",
     "argon2": "^0.44.0",
     "jsonwebtoken": "^9.0.2",
     "next": "16.0.1",
