@@ -1,0 +1,111 @@
+"use client";
+
+import { cn } from "@/utilities/cn";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  ComponentProps,
+  createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useMemo,
+} from "react";
+import { useForm, UseFormProps, UseFormReturn, Resolver } from "react-hook-form";
+import { z } from "zod";
+
+// Create a context for the form methods
+const FormContext = createContext<UseFormReturn<any> | undefined>(undefined);
+
+// Custom hook to access form context
+export const useFormContext = <T extends z.ZodType<any, any>>() => {
+  const context = useContext(FormContext);
+  if (!context) {
+    throw new Error("useFormContext must be used within a Form component");
+  }
+  return context as UseFormReturn<z.infer<T>>;
+};
+
+interface IForm<T extends z.ZodType<any, any>>
+  extends Omit<
+    ComponentProps<"form">,
+    "children" | "onSubmit" | "defaultValue" | "defaultChecked"
+  > {
+  children: ((context: UseFormReturn<z.infer<T>>) => ReactNode) | ReactNode;
+  validationSchema: T;
+  defaultValues?: z.infer<T>;
+  onSubmit?: (
+    values: z.infer<T>,
+    methods: UseFormReturn<z.infer<T>>
+  ) => void | Promise<void>;
+  formOptions?: Omit<UseFormProps<z.infer<T>>, 'resolver'>;
+  isLoading?: boolean;
+  "aria-label"?: string;
+  setFormMethod?: Dispatch<SetStateAction<UseFormReturn<z.infer<T>, any, undefined> | null>>;
+}
+
+const Form = <T extends z.ZodType<any, any>>({
+  validationSchema,
+  defaultValues,
+  onSubmit = () => {},
+  children,
+  className,
+  formOptions = { mode: "onSubmit" },
+  isLoading = false,
+  "aria-label": ariaLabel = "Form",
+  setFormMethod,
+  ...rest
+}: IForm<T>) => {
+  // Use z.infer<T> for the useForm generic
+  const methods = useForm<z.infer<T>>({
+    resolver: zodResolver(validationSchema) as unknown as Resolver<
+      z.infer<T>,
+      any,
+      z.infer<T>
+    >,
+    defaultValues,
+    ...formOptions,
+  });
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting, errors, isDirty, isValid },
+  } = methods;
+
+  const formState = useMemo(
+    () => ({
+      isSubmitting,
+      isLoading,
+      isDirty,
+      isValid,
+      hasErrors: Object.keys(errors).length > 0,
+    }),
+    [isSubmitting, isLoading, isDirty, isValid, errors]
+  );
+
+  useEffect(() => {
+    if (setFormMethod) {
+      setFormMethod(methods);
+    }
+  }, [methods, setFormMethod]);
+
+  return (
+    <FormContext.Provider value={methods}>
+      <form
+        onSubmit={handleSubmit((values) => onSubmit(values, methods))}
+        className={cn("group", className)}
+        noValidate
+        aria-label={ariaLabel}
+        aria-busy={formState.isSubmitting || formState.isLoading}
+        data-disabled={formState.isSubmitting || formState.isLoading}
+        role="form"
+        {...rest}
+      >
+        {typeof children === "function" ? children(methods) : children}
+      </form>
+    </FormContext.Provider>
+  );
+};
+
+export default Form;
