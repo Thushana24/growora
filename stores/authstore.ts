@@ -3,8 +3,9 @@ import Cookie from "js-cookie";
 import cookieKeys from "@/configs/cookieKeys";
 import { Dispatch, SetStateAction } from "react";
 import { User } from "@/generated/prisma/client";
+import { RegisterUserResponse } from "@/app/api/types";
 
-type SafeUser = Omit<User, "password">;
+export type SafeUser = Omit<RegisterUserResponse, "password">;
 
 interface IAuthStore {
   states: {

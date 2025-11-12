@@ -11,16 +11,8 @@ export const useRegister = ({
   return useCreateMutation<
     Record<string, any>,
     RegisterInput,
-    {
-      data: {
-        user: RegisterResponse;
-      };
-    },
-    {
-      data: {
-        user: RegisterResponse;
-      };
-    }
+    RegisterResponse,
+    RegisterResponse
   >({
     apiClient: jsonApiClient,
     method: "post",
