@@ -41,8 +41,9 @@ const RegisterForm = () => {
 
           // Navigate smoothly
           startTransition(() => {
-            router.push("/");
+            router.push("/verify-otp");
           });
+          
         } catch (error) {
           const err = error as AxiosError;
           const errObject = err.response?.data as CustomError;

@@ -8,6 +8,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { email, phone, code, purpose } = verifyOtpSchema.parse(body);
 
+    if (!email && !phone) {
+      return NextResponse.json(
+        { success: false, message: "Email or phone required" },
+        { status: 400 }
+      );
+    }
     //Find OTP record
     const otpRecord = await prisma.otp.findFirst({
       where: {
@@ -27,11 +33,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    //Mark OTP as verified
-    await prisma.otp.update({
-      where: { id: otpRecord.id },
+    const updated = await prisma.otp.updateMany({
+      where: { id: otpRecord.id, isVerified: false },
       data: { isVerified: true },
     });
+
+    //Mark OTP as verified
+    if (updated.count === 0) {
+      return NextResponse.json(
+        { success: false, message: "OTP already used or expired" },
+        { status: 400 }
+      );
+    }
 
     return NextResponse.json({
       success: true,

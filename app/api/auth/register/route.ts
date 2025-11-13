@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
         html: htmlContent, 
       });
     }
-
+    
     // Generate JWT token
     const token = generateToken({
       id: result.newUser.id,
