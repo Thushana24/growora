@@ -2,7 +2,7 @@
 
 import { useRegister } from "@/app/api-client/auth/register/useRegister";
 import { RegisterUserSchema } from "@/schemas/user.schema";
-import { IoPerson, IoMail, IoLockClosed, IoPhoneLandscape } from "react-icons/io5";
+import { IoPerson, IoMail, IoLockClosed, IoCall } from "react-icons/io5";
 import Cookie from "js-cookie";
 import cookieKeys from "@/configs/cookieKeys";
 import { useRouter } from "next/navigation";
@@ -53,7 +53,8 @@ const RegisterForm = () => {
     >
       {({ register, formState: { errors, isSubmitting } }) => (
         <>
-          <Field>
+         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+         <Field>
             <InputGroup>
               <IoPerson data-slot="icon" />
               <Input
@@ -76,8 +77,10 @@ const RegisterForm = () => {
             </InputGroup>
             <ErrorMessage>{errors.lastName?.message}</ErrorMessage>
           </Field>
-
-          <Field>
+         </div>
+          
+         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+         <Field>
             <InputGroup>
               <IoMail data-slot="icon" />
               <Input
@@ -91,7 +94,7 @@ const RegisterForm = () => {
 
           <Field>
             <InputGroup>
-              <IoPhoneLandscape data-slot="icon" />
+              <IoCall  data-slot="icon" />
               <Input
                 placeholder="Your phone number"
                 aria-invalid={!!errors.phone}
@@ -100,7 +103,9 @@ const RegisterForm = () => {
             </InputGroup>
             <ErrorMessage>{errors.phone?.message}</ErrorMessage>
           </Field>
-
+         </div>
+        
+         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field>
             <InputGroup>
               <IoLockClosed data-slot="icon" />
@@ -126,7 +131,7 @@ const RegisterForm = () => {
             </InputGroup>
             <ErrorMessage>{errors.confirmPassword?.message}</ErrorMessage>
           </Field>
-
+          </div>
           <Button type="submit" isLoading={isSubmitting || isPending} className="w-full">
             Register
           </Button>
