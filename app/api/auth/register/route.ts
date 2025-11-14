@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
     const { password: _, ...userResponse } = result.newUser;
     const { ...otpResponse } = result.otp;
 
-    return NextResponse.json(
+    const response =  NextResponse.json(
       {
         success: true,
         data: {
@@ -108,6 +108,16 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
+
+    response.cookies.set("pending_verification", email ?? phone, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      path: "/",
+      maxAge: 10 * 60, // 10 minutes
+    });
+
+    return response;
   } catch (error: any) {
     return handleError(error, "Failed to register user");
   }
