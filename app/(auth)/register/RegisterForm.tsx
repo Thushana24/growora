@@ -32,12 +32,12 @@ const RegisterForm = () => {
           const response = await register({ body: values });
 
           // Save auth to cookies
-          Cookie.set(cookieKeys.USER_TOKEN, response.token);
-          Cookie.set(cookieKeys.USER, JSON.stringify(response.data.user));
+          // Cookie.set(cookieKeys.USER_TOKEN, response.token);
+          // Cookie.set(cookieKeys.USER, JSON.stringify(response.data.user));
 
-          // Update auth state
-          setAuthToken(response.token);
-          setUser(response.data.user);
+          // // Update auth state
+          // setAuthToken(response.token);
+          // setUser(response.data.user);
 
           // Navigate smoothly
           startTransition(() => {

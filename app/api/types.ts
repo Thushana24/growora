@@ -18,18 +18,7 @@ export type RegisterUserResponse = Prisma.UserGetPayload<{
       };
     }>;
     
-export interface RegisterResponse {
+  export interface RegisterResponse {
       success: boolean;
-      data: {
-        user: RegisterUserResponse;
-        otp: {
-          id: string;
-          code: string;
-          expiresAt: string;
-          purpose: string;
-        };
-      };
-      token: string;
       message: string;
-}
-    
+  }
