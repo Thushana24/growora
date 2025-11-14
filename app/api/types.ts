@@ -22,3 +22,10 @@ export type RegisterUserResponse = Prisma.UserGetPayload<{
       success: boolean;
       message: string;
   }
+
+  export interface OTPVerifyResponse {
+    success: boolean;
+    message: string;
+    token: string;
+    user: RegisterUserResponse;
+  }

@@ -1,8 +1,9 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import RegisterForm from "./RegisterForm";
 import { Im500Px } from "react-icons/im";
+import { Verify } from "crypto";
+import VerifyOtpForm from "./VerifyOtpForm";
 
 const page = () => {
   const registerBannerImage: string | null = "https://images.pexels.com/photos/8845420/pexels-photo-8845420.jpeg";
@@ -53,7 +54,7 @@ const page = () => {
             </p>
 
             <div className="mt-10 w-full max-w-sm">
-              <RegisterForm />
+              <VerifyOtpForm />
             </div>
           </div>
           {/* form */}
