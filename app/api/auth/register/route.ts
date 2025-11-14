@@ -86,30 +86,13 @@ export async function POST(request: NextRequest) {
       });
     }
     
-    // Generate JWT token
-    const token = generateToken({
-      id: result.newUser.id,
-      role: result.newUser.role,
-      permissions: BUYER_PERMISSIONS,
-    });
+    // 5. Set cookie for pending verification
+    const response = NextResponse.json({
+      success: true,
+      message: "OTP sent. Please verify.",
+    }, { status: 201 });
 
-    const { password: _, ...userResponse } = result.newUser;
-    const { ...otpResponse } = result.otp;
-
-    const response =  NextResponse.json(
-      {
-        success: true,
-        data: {
-          user: userResponse,
-          otp: otpResponse,
-        },
-        token,
-        message: "User created successfully.",
-      },
-      { status: 201 }
-    );
-
-    response.cookies.set("pending_verification", email ?? phone, {
+    response.cookies.set("pending_verification", validatedData.email ?? validatedData.phone, {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
