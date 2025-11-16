@@ -4,8 +4,8 @@ export const RegisterUserSchema = z
   .object({
     firstName: z
       .string({ message: "First name is required" })
-      .min(2, { message: "First name must be at least 2 characters long" })
-      .max(50, { message: "First name cannot exceed 50 characters" })
+      .min(1, { message: "First name is required" })
+      .max(50, { message: "First name is too long" })
       .trim()
       .regex(/^[a-zA-Z\s-]+$/, {
         message: "First name can only contain letters, spaces, and hyphens",
@@ -13,8 +13,8 @@ export const RegisterUserSchema = z
 
     lastName: z
       .string({ message: "Last name is required" })
-      .min(2, { message: "Last name must be at least 2 characters long" })
-      .max(50, { message: "Last name cannot exceed 50 characters" })
+      .min(1, { message: "First name is required" })
+      .max(50, { message: "First name is too long" })
       .trim()
       .regex(/^[a-zA-Z\s-]+$/, {
         message: "Last name can only contain letters, spaces, and hyphens",

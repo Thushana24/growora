@@ -1,22 +1,21 @@
-import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import RegisterForm from "./RegisterForm";
 import { Im500Px } from "react-icons/im";
 
 const page = () => {
-  const registerBannerImage: string | null = "https://images.pexels.com/photos/8845420/pexels-photo-8845420.jpeg";
+  const registerBannerImage: string | null =
+    "https://images.pexels.com/photos/8845420/pexels-photo-8845420.jpeg";
   return (
     <section className="@container flex h-dvh w-full flex-col overflow-hidden">
       <div className="flex w-full flex-1 overflow-hidden">
-
-      {/* form */}
+        {/* form */}
         <div className="flex h-dvh w-full flex-col overflow-hidden">
           <header className="flex w-full items-center justify-between gap-10 px-5 pt-5">
             {/* logo */}
             <div className="flex items-center justify-start gap-3">
               <div className="bg-primary flex size-12 items-center justify-center rounded-full">
-              <Im500Px className="size-8 text-white" />
+                <Im500Px className="size-8 text-white" />
               </div>
               <div>
                 <h1 className="text-2xl font-semibold text-gray-800">
@@ -43,7 +42,7 @@ const page = () => {
           </header>
 
           {/* form */}
-          <div className="my-10 flex w-full flex-1 flex-col items-center-safe justify-center-safe overflow-y-auto px-5">
+          <div className="scrollbar-none my-10 flex w-full flex-1 flex-col items-center-safe justify-center-safe overflow-y-auto px-5">
             <h2 className="text-center text-3xl font-bold text-gray-800">
               Register Account
             </h2>
