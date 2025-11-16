@@ -14,7 +14,7 @@ const page = () => {
           <header className="flex w-full items-center justify-between gap-10 px-5 pt-5">
             {/* logo */}
             <div className="flex items-center justify-start gap-3">
-              <div className="bg-primary flex size-12 items-center justify-center rounded-full">
+              <div className="bg-primary flex size-12 shrink-0 items-center justify-center rounded-full">
                 <Im500Px className="size-8 text-white" />
               </div>
               <div>
@@ -22,7 +22,7 @@ const page = () => {
                   Growora
                 </h1>
                 <p className="text-xs text-gray-600">
-                  Lorem ipsum dolor sit amet.
+                  Eat fresh. Live healthy. Choose Growora.
                 </p>
               </div>
             </div>
