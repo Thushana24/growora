@@ -1,30 +1,29 @@
-import React from "react";
+"use client";
 import Link from "next/link";
 import Image from "next/image";
 import { Im500Px } from "react-icons/im";
-import { Verify } from "crypto";
 import VerifyOtpForm from "./VerifyOtpForm";
 
 const page = () => {
-  const registerBannerImage: string | null = "https://images.pexels.com/photos/8845420/pexels-photo-8845420.jpeg";
+  const registerBannerImage: string | null =
+    "https://images.pexels.com/photos/8845420/pexels-photo-8845420.jpeg";
   return (
     <section className="@container flex h-dvh w-full flex-col overflow-hidden">
       <div className="flex w-full flex-1 overflow-hidden">
-
-      {/* form */}
+        {/* form */}
         <div className="flex h-dvh w-full flex-col overflow-hidden">
           <header className="flex w-full items-center justify-between gap-10 px-5 pt-5">
             {/* logo */}
             <div className="flex items-center justify-start gap-3">
-              <div className="bg-primary flex size-12 items-center justify-center rounded-full">
-              <Im500Px className="size-8 text-white" />
+              <div className="bg-primary flex size-12 shrink-0 items-center justify-center rounded-full">
+                <Im500Px className="size-8 text-white" />
               </div>
               <div>
                 <h1 className="text-2xl font-semibold text-gray-800">
                   Growora
                 </h1>
                 <p className="text-xs text-gray-600">
-                  Lorem ipsum dolor sit amet.
+                  Eat fresh. Live healthy. Choose Growora.
                 </p>
               </div>
             </div>
@@ -46,11 +45,11 @@ const page = () => {
           {/* form */}
           <div className="my-10 flex w-full flex-1 flex-col items-center-safe justify-center-safe overflow-y-auto px-5">
             <h2 className="text-center text-3xl font-bold text-gray-800">
-              Register Account
+              OTP Verification
             </h2>
 
             <p className="mt-1 text-center text-xs text-balance text-gray-600">
-              Lorem ipsum dolor sit amet consectetur adipisicing.
+              Please enter the 6-digit code sent to your email.
             </p>
 
             <div className="mt-10 w-full max-w-sm">
@@ -61,8 +60,8 @@ const page = () => {
 
           <footer className="w-full px-5 pb-5">
             <p className="mx-auto max-w-xs text-center text-[0.65rem] text-balance text-gray-600">
-              Copyright &copy; {new Date().getFullYear()} Employee Rating (pvt)
-              Ltd. All Rights Reserved. 
+              Copyright &copy; {new Date().getFullYear()} Growora (pvt) Ltd. All
+              Rights Reserved. 
             </p>
           </footer>
         </div>

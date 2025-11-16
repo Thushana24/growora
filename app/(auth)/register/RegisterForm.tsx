@@ -3,13 +3,10 @@
 import { useRegister } from "@/app/api-client/auth/register/useRegister";
 import { RegisterUserSchema } from "@/schemas/user.schema";
 import { IoPerson, IoMail, IoLockClosed, IoCall } from "react-icons/io5";
-import Cookie from "js-cookie";
-import cookieKeys from "@/configs/cookieKeys";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
 import { CustomError } from "@/app/api/helpers/handleError";
 import Form from "@/app/components/Forms/Form";
-import { useAuthActions } from "@/stores/authstore";
 import Field from "@/app/components/Forms/Field";
 import Input from "@/app/components/Forms/Input";
 import InputGroup from "@/app/components/Forms/InputGroup";
@@ -20,7 +17,6 @@ import { useTransition } from "react";
 const RegisterForm = () => {
   const router = useRouter();
   const { mutateAsync: register } = useRegister({});
-  const { setUser, setAuthToken } = useAuthActions();
   const [isPending, startTransition] = useTransition();
 
   return (
