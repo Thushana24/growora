@@ -1,118 +1,145 @@
 "use client";
 
-import { useRegister } from "@/app/api-client/auth/register/useRegister";
-import { RegisterUserSchema } from "@/schemas/user.schema";
-import { IoPerson, IoMail, IoLockClosed, IoCall } from "react-icons/io5";
-import Cookie from "js-cookie";
-import cookieKeys from "@/configs/cookieKeys";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
-import { CustomError } from "@/app/api/helpers/handleError";
+import Cookie from "js-cookie";
+import { useTransition, useState } from "react";
 import Form from "@/app/components/Forms/Form";
-import { useAuthActions } from "@/stores/authstore";
 import Field from "@/app/components/Forms/Field";
 import Input from "@/app/components/Forms/Input";
-import InputGroup from "@/app/components/Forms/InputGroup";
 import ErrorMessage from "@/app/components/Forms/ErrorMessage";
 import Button from "@/app/components/Button";
-import { useRef, useTransition } from "react";
+import cookieKeys from "@/configs/cookieKeys";
 import { useVerifyOtp } from "@/app/api-client/auth/register/useVerify";
 import { verifyOtpSchema } from "@/schemas/otp.schema";
+import { useAuthActions } from "@/stores/authstore";
+import { CustomError } from "@/app/api/helpers/handleError";
 
-const RegisterForm = () => {
+const OTPVerifyForm = () => {
   const router = useRouter();
   const { mutateAsync: verify } = useVerifyOtp({});
   const { setUser, setAuthToken } = useAuthActions();
   const [isPending, startTransition] = useTransition();
 
-  const inputRefs = useRef<HTMLInputElement[]>([]);
+  const [otp, setOtp] = useState(Array(6).fill(""));
+
+  // Helper to move focus forward/backward
+  const moveFocus = (
+    element: HTMLInputElement | null,
+    direction: "next" | "prev",
+  ) => {
+    if (!element) return;
+
+    const parent = element.closest("[data-otp-group]");
+    if (!parent) return;
+
+    const inputs = Array.from(parent.querySelectorAll("input"));
+
+    const index = inputs.indexOf(element);
+    const nextIndex = direction === "next" ? index + 1 : index - 1;
+
+    if (inputs[nextIndex]) {
+      (inputs[nextIndex] as HTMLInputElement).focus();
+    }
+  };
 
   return (
     <Form
       validationSchema={verifyOtpSchema}
-      className="space-y-1"
-      onSubmit={async (values, methods) => {
+      className="space-y-4"
+      onSubmit={async (_, methods) => {
         try {
-          const response = await verify({ body: values });
+          const code = otp.join("");
 
-          //Save auth to cookies
+          const response = await verify({ body: { code } });
+
           Cookie.set(cookieKeys.USER_TOKEN, response.token);
           Cookie.set(cookieKeys.USER, JSON.stringify(response.user));
 
-          // Update auth state
           setAuthToken(response.token);
           setUser(response.user);
 
-          // Navigate smoothly
-          startTransition(() => {
-            router.push("/");
-          });
-          
+          startTransition(() => router.push("/"));
         } catch (error) {
-          const err = error as AxiosError;
-          const errObject = err.response?.data as CustomError;
-          // Handle server validation error
-          methods.setError("code", { message: errObject?.error?.message || "Something went wrong" });
+          const errObj = (error as AxiosError).response?.data as CustomError;
+          methods.setError("code", { message: errObj?.error?.message });
         }
       }}
     >
-      {({ register, setValue, formState: { errors, isSubmitting } }) => {
-            const setRef = (el: HTMLInputElement, index: number) => {
-                  if (el) inputRefs.current[index] = el;
-                };
-        
-                const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-                  const val = e.target.value;
-                  if (!/^\d?$/.test(val)) return;
-        
-                  // Update form value
-                  const newCode = inputRefs.current.map((input) => input.value);
-                  newCode[index] = val;
-                  setValue("code", newCode.join(""));
-        
-                  // Move focus to next input
-                  if (val && index < inputRefs.current.length - 1) {
-                    inputRefs.current[index + 1].focus();
-                  }
-                };
-        
-                const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-                  if (e.key === "Backspace" && !inputRefs.current[index].value && index > 0) {
-                    inputRefs.current[index - 1].focus();
-                  }
-                };
-return(
-      <>
+      {({ formState: { errors, isSubmitting } }) => {
+        const handleChange = (value: string, index: number, e: any) => {
+          if (!/^\d?$/.test(value)) return;
+
+          const updated = [...otp];
+          updated[index] = value;
+          setOtp(updated);
+
+          if (value) moveFocus(e.target, "next");
+        };
+
+        const handleKeyDown = (e: any, index: number) => {
+          if (e.key === "Backspace" && !otp[index]) {
+            moveFocus(e.target, "prev");
+          }
+        };
+
+        const handlePaste = (e: any) => {
+          e.preventDefault();
+          const pasted = e.clipboardData.getData("text").replace(/\D/g, "");
+
+          if (pasted.length !== 6) return;
+
+          const digits = pasted.split("").slice(0, 6);
+          setOtp(digits);
+
+          const group = e.target.closest("[data-otp-group]");
+          if (!group) return;
+
+          const inputs = Array.from(group.querySelectorAll("input"));
+          inputs.forEach((input, i) => {
+            (input as HTMLInputElement).value = digits[i];
+          });
+
+          moveFocus(inputs[5] as HTMLInputElement, "next");
+        };
+
+        return (
+          <>
             <Field name="code">
               {() => (
-                <div className="flex justify-center gap-2">
-                  {[...Array(6)].map((_, i) => (
-                    <InputGroup key={i}>
-                      <Input
-                        inputClass="w-12 h-12 text-center text-xl border-b"
-                        maxLength={1}
-                        type="text"
-                        ref={(el) => setRef(el!, i)}
-                        onChange={(e) => handleChange(e, i)}
-                        onKeyDown={(e) => handleKeyDown(e, i)}
-                      />
-                    </InputGroup>
+                <div
+                  data-otp-group
+                  className="mx-auto flex w-full max-w-xs justify-center gap-2"
+                >
+                  {otp.map((val, i) => (
+                    <Input
+                      key={i}
+                      maxLength={1}
+                      value={val}
+                      inputClass="w-12 h-12 text-center text-xl border-b"
+                      onChange={(e) => handleChange(e.target.value, i, e)}
+                      onKeyDown={(e) => handleKeyDown(e, i)}
+                      onPaste={handlePaste}
+                    />
                   ))}
                 </div>
               )}
             </Field>
+
             <ErrorMessage>{errors.code?.message}</ErrorMessage>
 
-            <Button type="submit" isLoading={isSubmitting || isPending} className="w-full">
+            <Button
+              type="submit"
+              isLoading={isSubmitting || isPending}
+              className="w-full"
+            >
               Verify OTP
             </Button>
           </>
         );
-       
-      }
-      }
+      }}
     </Form>
   );
 };
 
-export default RegisterForm;
+export default OTPVerifyForm;

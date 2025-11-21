@@ -9,5 +9,7 @@
     "source.fixAll.eslint": "never"
   },
   "typescript.tsdk": "node_modules\\typescript\\lib",
-  "editor.formatOnPaste": true
+  "editor.formatOnPaste": true,
+  "WillLuke.nextjs.addTypesOnSave": true,
+  "WillLuke.nextjs.hasPrompted": true
 }
